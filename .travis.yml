@@ -1,0 +1,21 @@
+language: python
+python:
+- '3.6'
+- '3.7'
+- '3.8'
+- '3.9'
+install:
+- pip3 install .
+script:
+- pytest
+deploy:
+  provider: pypi
+  on:
+    tags: true
+    branch: main
+  user: __token__
+  password:
+    secure: zQ9d+aFxUkX9LzF4t7gwlaPNpJnI7jr9IVrgVoiP36CTmSzcezRLjlwZPhVCIwwxnh4qvsxZGKmjFDk9/8X5aD9gWSfQJUICo6LS+s/PfE0ZDs1NwjgCCROrI57WON37bZ36UEvwyNfWg2s8uvp+KcMkVtopNggFGtwtw+eJrEHvsBTnBGmCkIvpPnV8dqsmDNns7/grIoGXSsqI46o1+wJlFiX/d72Oe6BztKr4RLuHabKxmLRf/Jbg+hDL3r0bLkB1kPXooAh88BNmt7NYs1J4gY7HG1DGEzeqPnX8q9otegjdikDwZ1oDm2M7e02HPBHy/wV2/2NlgY4f9knvJB8ii/dDTyIMMrjHfd3bDRlcGPVGP0BrE0llHSqTgpta4C4kVzAII5tY+mp3OgWODzbhTv2Uo6+DUcO8ilW1Rgs80+PIbHhQVLl0U/4Nq5ZmYuAg9l6Djkzwcg5mlyiztIazp4UwbJqOCeHIav72LOFMqkxv8AoMcH8i13HLQdW72ei1fk/lJEOUHSj3wVJCOULWII3FgsYuHfASyTT+586srwZyILOksSNG+zbCanu80ZI0dupkt1xFJz6siFBiZgPDA+dW8ehMkGvV8b6pDcl9Yl1kT5KTZgweGhrCkw8YuRrvrTjfcGtVmln8aO+5/NJTXhgjjOw+nZFZP/7YXbY=
+  distributions: sdist
+  skip_existing: true
+  skip_cleanup: true
