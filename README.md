@@ -1,1 +1,1 @@
-# python-stub-runtime-generator
+# Python stub runtime generator
