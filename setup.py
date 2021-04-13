@@ -61,6 +61,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
+            'numpy',
         ],
     },
     test_deps=test_deps,
