@@ -25,29 +25,30 @@ def get_test_class():
 
     return TestClass
 
-if sys.version_info[0] == 3.6:
+
+if sys.version_info == (3, 6):
     stub_test_class = """class TestClass(object, metaclass=Meta):
-    \tdef __init__(self, a:numpy.ndarray):
-    \t\t...
-    \tdef f(self, b:int) -> numpy.ndarray:
-    \t\t\"\"\"
-    \t\tciao
-    \t\t:param b:
-    \t\t:return:
-    \t\t\"\"\"
-    \t\t...
-    \tdef f_meta(self, a:int, s:str = 'Hi') -> int:
-    \t\t...\n"""
+\tdef __init__(self, a:numpy.ndarray):
+\t\t...
+\tdef f(self, b:int) -> numpy.ndarray:
+\t\t\"\"\"
+\t\tciao
+\t\t:param b:
+\t\t:return:
+\t\t\"\"\"
+\t\t...
+\tdef f_meta(self, a:int, s:str = 'Hi') -> int:
+\t\t...\n"""
 else:
     stub_test_class = """class TestClass(object, metaclass=Meta):
-    \tdef __init__(self, a: numpy.ndarray):
-    \t\t...
-    \tdef f(self, b: int) -> numpy.ndarray:
-    \t\t\"\"\"
-    \t\tciao
-    \t\t:param b:
-    \t\t:return:
-    \t\t\"\"\"
-    \t\t...
-    \tdef f_meta(self, a: int, s: str = 'Hi') -> int:
-    \t\t...\n"""
+\tdef __init__(self, a: numpy.ndarray):
+\t\t...
+\tdef f(self, b: int) -> numpy.ndarray:
+\t\t\"\"\"
+\t\tciao
+\t\t:param b:
+\t\t:return:
+\t\t\"\"\"
+\t\t...
+\tdef f_meta(self, a: int, s: str = 'Hi') -> int:
+\t\t...\n"""
