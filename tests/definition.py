@@ -37,7 +37,7 @@ if sys.version_info >= (3, 6) and sys.version_info < (3, 7):
 \t\t:return:
 \t\t\"\"\"
 \t\t...
-\tdef f_meta(self, a:int, s:str = 'Hi') -> int:
+\tdef f_meta(self, a:int, s:str='Hi') -> int:
 \t\t...\n"""
 else:
     stub_test_class = """class TestClass(object, metaclass=Meta):
