@@ -26,7 +26,7 @@ def get_test_class():
     return TestClass
 
 
-if sys.version_info == (3, 6):
+if sys.version_info >= (3, 6) and sys.version_info < (3, 7):
     stub_test_class = """class TestClass(object, metaclass=Meta):
 \tdef __init__(self, a:numpy.ndarray):
 \t\t...
