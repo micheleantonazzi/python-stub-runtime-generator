@@ -58,10 +58,10 @@ setup(
     tests_require=test_deps,
     # Add here the package dependencies
     install_requires=[
+        'numpy',
     ],
     entry_points={
         'console_scripts': [
-            'numpy',
         ],
     },
     test_deps=test_deps,
