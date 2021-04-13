@@ -1,4 +1,4 @@
-name: BuildPublish
+name: Build
 
 on: [push]
 
