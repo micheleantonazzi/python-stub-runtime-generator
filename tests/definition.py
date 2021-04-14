@@ -75,7 +75,7 @@ if (3, 6) <= sys.version_info < (3, 7):
 \t...
 """
 else:
-    stub_f_meta = """def f_meta(self, a: int, s:str = 'Hi') -> int:
+    stub_f_meta = """def f_meta(self, a: int, s: str = 'Hi') -> int:
 \t\"\"\"
 \tdocstring
 \t\"\"\"
