@@ -2,8 +2,10 @@ import importlib.machinery
 import importlib.util
 import inspect
 import os
+import pkgutil
 from inspect import signature
 from io import StringIO
+from types import ModuleType
 from typing import List, Callable, Any
 
 
@@ -24,8 +26,8 @@ class StubGenerator:
         loader.exec_module(module)
         self._module = module
 
-        self._members: List[str] = [item for item in module.__dict__.keys() if not item.startswith('__') and not inspect.ismodule(getattr(module, item))]
-
+        self._members: List[str] = [item for item in module.__dict__.keys() if not item.startswith('__')]
+        self._modules: List[ModuleType] = [getattr(module, item) for item in module.__dict__.keys() if inspect.ismodule(getattr(module, item))]
         self._stubs_strings: List[str] = []
 
     def _generate_class_stub(self, clazz: type) -> str:
@@ -75,7 +77,16 @@ class StubGenerator:
         buff.write(indentation + '\t...\n')
         return buff.getvalue()
 
-    def _generate_generic_stub(self, element_name: str, element: Any):
+    def _generate_generic_stub(self, element_name: str, element: Any) -> str:
+        """
+        Generates the stub for a generic variable
+        :param element_name: the name of the element
+        :type element_name: str
+        :param element: the element
+        :type element: Any
+        :return: the stub as a string
+        :rtype: str
+        """
         return '{0}: {1}\n'.format(element_name, type(element).__name__)
 
     def get_stubs(self) -> List[str]:
@@ -98,7 +109,7 @@ class StubGenerator:
                 self._stubs_strings.append(self._generate_class_stub(attr))
             elif inspect.isfunction(attr):
                 self._stubs_strings.append(self._generate_function_stub(attr))
-            else:
+            elif not inspect.ismodule(attr):
                 self._stubs_strings.append(self._generate_generic_stub(member_name, attr))
 
         return self
@@ -109,5 +120,8 @@ class StubGenerator:
         :return: None
         """
         with open(self._file_path + 'i', mode='w') as f:
+            for module in self._modules:
+                f.write('import ' + module.__name__ + '\n')
+            f.write('\n')
             for stub in self._stubs_strings:
                 f.write(stub + '\n')
