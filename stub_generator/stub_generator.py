@@ -1,3 +1,6 @@
+import imp
+import importlib
+import inspect
 from typing import Type
 from io import StringIO
 from inspect import signature
@@ -6,16 +9,18 @@ import os
 
 class StubGenerator:
     """
-    This class takes a file as input and generates the corresponding stub file at run time.
+    This class takes a file as input and generates the corresponding stub file for each type (class) defined inside it at run time.
     This means that the file is not statically parsed, but it is executed and
-    then the types are created and analyzed to produce the stub file.
+    then the types are dynamically created and analyzed to produce the stub file.
     """
     def __init__(self, file_path: str):
         self._file_path: str = file_path
         if not os.path.exists(self._file_path):
             raise FileNotFoundError
-        for item in dir(self._file_path):
-            pass
+
+        module = imp.load_source('imported', self._file_path)
+        self._classes: List[type] = [getattr(module, item) for item in dir(module) if inspect.isclass(getattr(module, item))]
+        self._stubs_strings: List[str] = []
 
     def _generate_class_stub(self, clazz: type) -> str:
         """
@@ -27,10 +32,10 @@ class StubGenerator:
         buff = StringIO()
 
         # Class prototype
-        buff.write('class ' + clazz.__name__ + '(')
+        buff.write('class ' + clazz.__name__.split('.')[-1] + '(')
 
         # Add super classes
-        for c in clazz.mro()[1:]:
+        for c in clazz.__bases__:
             buff.write(c.__name__ + ', ')
 
         # Add metaclass
@@ -46,4 +51,23 @@ class StubGenerator:
                     buff.write('\t\t\"\"\"\n')
                 buff.write('\t\t...\n')
 
+        buff.write('\t...\n')
+
         return buff.getvalue()
+
+    def generate_stubs(self):
+        """
+        Generates the stubs for the classes collected in the input file
+        :return: None
+        """
+        self._stubs_strings = [self._generate_class_stub(clazz) for clazz in self._classes]
+        print(self._stubs_strings[0])
+
+    def write_to_file(self):
+        """
+        Writes the stub files in the same location as the input file
+        :return: None
+        """
+        with open(self._file_path + 'i', mode='w') as f:
+            for stub in self._stubs_strings:
+                f.write(stub)

@@ -2,28 +2,25 @@ import sys
 
 import numpy as np
 
-def get_test_class():
-    def f_meta(self, a: int, s: str = 'Hi') -> int:
-        return a + 1
+def f_meta(self, a: int, s: str = 'Hi') -> int:
+    return a + 1
 
-    class Meta(type):
-        def __new__(cls, classname, supers, classdict):
-            classdict['f_meta'] = f_meta
-            return type.__new__(cls, classname, supers, classdict)
+class Meta(type):
+    def __new__(cls, classname, supers, classdict):
+        classdict['f_meta'] = f_meta
+        return type.__new__(cls, classname, supers, classdict)
 
-    class TestClass(metaclass=Meta):
-        def __init__(self, a: np.ndarray):
-            self._a = a
+class TestClass(metaclass=Meta):
+    def __init__(self, a: np.ndarray):
+        self._a = a
 
-        def f(self, b: int) -> np.ndarray:
-            """
-            ciao
-            :param b:
-            :return:
-            """
-            return np.array([b])
-
-    return TestClass
+    def f(self, b: int) -> np.ndarray:
+        """
+        ciao
+        :param b:
+        :return:
+        """
+        return np.array([b])
 
 
 if sys.version_info >= (3, 6) and sys.version_info < (3, 7):
@@ -38,7 +35,8 @@ if sys.version_info >= (3, 6) and sys.version_info < (3, 7):
 \t\t\"\"\"
 \t\t...
 \tdef f_meta(self, a:int, s:str='Hi') -> int:
-\t\t...\n"""
+\t\t...
+\t...\n"""
 else:
     stub_test_class = """class TestClass(object, metaclass=Meta):
 \tdef __init__(self, a: numpy.ndarray):
@@ -51,4 +49,5 @@ else:
 \t\t\"\"\"
 \t\t...
 \tdef f_meta(self, a: int, s: str = 'Hi') -> int:
-\t\t...\n"""
+\t\t...
+\t...\n"""
