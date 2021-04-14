@@ -9,7 +9,8 @@ from typing import List
 
 class StubGenerator:
     """
-    This class takes a file as input and generates the corresponding stub file for each type (class) defined inside it at run time.
+    This class takes a file as input and generates the corresponding stub file for each types (generic varaibles, functions, classes)
+    defined inside it at run time.
     This means that the file is not statically parsed, but it is executed and
     then the types are dynamically created and analyzed to produce the stub file.
     """
@@ -21,8 +22,10 @@ class StubGenerator:
         spec = importlib.util.spec_from_loader(loader.name, loader)
         module = importlib.util.module_from_spec(spec)
         loader.exec_module(module)
+        self._module = module
 
-        self._classes: List[type] = [getattr(module, item) for item in dir(module) if inspect.isclass(getattr(module, item))]
+        self._members: List[str] = [item for item in dir(module) if not item.startswith("__")]
+
         self._stubs_strings: List[str] = []
 
     def _generate_class_stub(self, clazz: type) -> str:
@@ -68,13 +71,15 @@ class StubGenerator:
 
     def generate_stubs(self) -> 'StubGenerator':
         """
-        Generates the stubs for the classes collected in the input file
+        Generates the stubs for the types collected in the input file
         :return: the stub generator
         :rtype StubGenerator
         """
-        self._stubs_strings = [self._generate_class_stub(clazz) for clazz in self._classes]
-        print(self._stubs_strings[0])
-        return  self
+        for member_name in self._members:
+            attr = getattr(self._module, member_name)
+            if inspect.isclass(attr):
+                self._stubs_strings.append(self._generate_class_stub(attr))
+        return self
 
     def write_to_file(self):
         """

@@ -1,6 +1,4 @@
 import os.path
-
-import numpy.lib.format
 import pytest
 
 from stub_generator.stub_generator import StubGenerator
