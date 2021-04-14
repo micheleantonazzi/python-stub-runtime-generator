@@ -28,7 +28,7 @@ def test_generate_class_stub():
 
 
 def test_generate_stubs_strings():
-    file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'deff.py')
+    file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'definition.py')
     generator = StubGenerator(file_path)
     generator.generate_stubs().write_to_file()
     try:
