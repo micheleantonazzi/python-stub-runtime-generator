@@ -67,8 +67,15 @@ else:
 stub_meta_class = """class Meta(type, metaclass=type):
 	...
 """
-
-stub_f_meta = """def f_meta(self, a:int, s:str='Hi') -> int:
+if (3, 6) <= sys.version_info < (3, 7):
+    stub_f_meta = """def f_meta(self, a:int, s:str='Hi') -> int:
+\t\"\"\"
+\tdocstring
+\t\"\"\"
+\t...
+"""
+else:
+    stub_f_meta = """def f_meta(self, a: int, s:str = 'Hi') -> int:
 \t\"\"\"
 \tdocstring
 \t\"\"\"
