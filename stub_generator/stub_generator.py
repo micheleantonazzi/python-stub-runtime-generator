@@ -1,10 +1,10 @@
-import imp
-import importlib
+import importlib.machinery
+import importlib.util
 import inspect
-from typing import Type
-from io import StringIO
-from inspect import signature
 import os
+from inspect import signature
+from io import StringIO
+from typing import List
 
 
 class StubGenerator:
@@ -17,8 +17,11 @@ class StubGenerator:
         self._file_path: str = file_path
         if not os.path.exists(self._file_path):
             raise FileNotFoundError
+        loader = importlib.machinery.SourceFileLoader('imported', self._file_path)
+        spec = importlib.util.spec_from_loader(loader.name, loader)
+        module = importlib.util.module_from_spec(spec)
+        loader.exec_module(module)
 
-        module = imp.load_source('imported', self._file_path)
         self._classes: List[type] = [getattr(module, item) for item in dir(module) if inspect.isclass(getattr(module, item))]
         self._stubs_strings: List[str] = []
 
@@ -55,13 +58,23 @@ class StubGenerator:
 
         return buff.getvalue()
 
-    def generate_stubs(self):
+    def get_stubs(self) -> List[str]:
+        """
+        Returns a list containing the generated stub strings
+        :return: a list containing the generated stub strings
+        :rtype: List[str]
+        """
+        return self._stubs_strings
+
+    def generate_stubs(self) -> 'StubGenerator':
         """
         Generates the stubs for the classes collected in the input file
-        :return: None
+        :return: the stub generator
+        :rtype StubGenerator
         """
         self._stubs_strings = [self._generate_class_stub(clazz) for clazz in self._classes]
         print(self._stubs_strings[0])
+        return  self
 
     def write_to_file(self):
         """
@@ -70,4 +83,4 @@ class StubGenerator:
         """
         with open(self._file_path + 'i', mode='w') as f:
             for stub in self._stubs_strings:
-                f.write(stub)
+                f.write(stub + '\n')

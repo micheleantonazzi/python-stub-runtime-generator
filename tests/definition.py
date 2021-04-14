@@ -51,3 +51,7 @@ else:
 \tdef f_meta(self, a: int, s: str = 'Hi') -> int:
 \t\t...
 \t...\n"""
+
+stub_meta_class = """class Meta(type, metaclass=type):
+	...
+"""
