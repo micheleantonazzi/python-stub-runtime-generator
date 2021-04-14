@@ -4,7 +4,7 @@ import inspect
 import os
 from inspect import signature
 from io import StringIO
-from typing import List, Callable
+from typing import List, Callable, Any
 
 
 class StubGenerator:
@@ -24,7 +24,7 @@ class StubGenerator:
         loader.exec_module(module)
         self._module = module
 
-        self._members: List[str] = [item for item in module.__dict__.keys() if not item.startswith('__')]
+        self._members: List[str] = [item for item in module.__dict__.keys() if not item.startswith('__') and not inspect.ismodule(getattr(module, item))]
 
         self._stubs_strings: List[str] = []
 
@@ -32,6 +32,7 @@ class StubGenerator:
         """
         Generates the stub string for the given class
         :param clazz: the class to generate stub
+        :type clazz: type
         :return: the str which contains the stub
         :rtype: str
         """
@@ -59,6 +60,8 @@ class StubGenerator:
         """
         Generates the stub string for the given function
         :param func: the function to generate stub
+        :type func: Callable
+        :param indentation: the string used to correctly align the function stub
         :return: the str which contains the stub
         :rtype: str
         """
@@ -71,6 +74,9 @@ class StubGenerator:
             buff.write(indentation + '\t\"\"\"\n')
         buff.write(indentation + '\t...\n')
         return buff.getvalue()
+
+    def _generate_generic_stub(self, element_name: str, element: Any):
+        return '{0}: {1}\n'.format(element_name, type(element).__name__)
 
     def get_stubs(self) -> List[str]:
         """
@@ -92,6 +98,9 @@ class StubGenerator:
                 self._stubs_strings.append(self._generate_class_stub(attr))
             elif inspect.isfunction(attr):
                 self._stubs_strings.append(self._generate_function_stub(attr))
+            else:
+                self._stubs_strings.append(self._generate_generic_stub(member_name, attr))
+
         return self
 
     def write_to_file(self):

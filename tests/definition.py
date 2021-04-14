@@ -68,7 +68,7 @@ stub_meta_class = """class Meta(type, metaclass=type):
 	...
 """
 
-stub_f_meta = """def f_meta(self, a: int, s: str = 'Hi') -> int:
+stub_f_meta = """def f_meta(self, a:int, s:str='Hi') -> int:
 \t\"\"\"
 \tdocstring
 \t\"\"\"
