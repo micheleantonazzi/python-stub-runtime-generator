@@ -2,7 +2,6 @@ import importlib.machinery
 import importlib.util
 import inspect
 import os
-import pkgutil
 from inspect import signature
 from io import StringIO
 from types import ModuleType
@@ -30,6 +29,23 @@ class StubGenerator:
         self._modules: List[ModuleType] = [getattr(module, item) for item in module.__dict__.keys() if inspect.ismodule(getattr(module, item))]
         self._stubs_strings: List[str] = []
 
+    def _get_element_name_with_module(self, element: type) -> str:
+        """
+        Returns the element name with the relative module and adds the module to the imports (if it is not yet present)
+        :param element: the element
+        :return:
+        :rtype: str
+        """
+        module = inspect.getmodule(element)
+        if module is None or module.__name__ == 'builtins' or module.__name__ == '__main__' :
+            return element.__name__
+
+        module_name = module.__name__
+        if module not in self._modules:
+            self._modules.append(module)
+
+        return '{0}.{1}'.format(module_name, element.__name__)
+
     def _generate_class_stub(self, name: str, clazz: type) -> str:
         """
         Generates the stub string for the given class
@@ -47,10 +63,12 @@ class StubGenerator:
 
         # Add super classes
         for c in clazz.__bases__:
-            buff.write(c.__name__ + ', ')
+            name_with_module = self._get_element_name_with_module(c)
+            buff.write(name_with_module + ', ')
 
         # Add metaclass
-        buff.write('metaclass=' + clazz.__class__.__name__ + '):\n')
+        name_with_module = self._get_element_name_with_module(clazz.__class__)
+        buff.write('metaclass=' + name_with_module + '):\n')
 
         for key, element in clazz.__dict__.items():
             if inspect.isfunction(element):

@@ -29,7 +29,7 @@ class TestClass(metaclass=Meta):
 
 
 if (3, 6) <= sys.version_info < (3, 7):
-    stub_test_class = """class TestClass(object, metaclass=Meta):
+    stub_test_class = """class TestClass(object, metaclass=tests.definition.Meta):
 \tdef __init__(self, a:numpy.ndarray):
 \t\t...
 \tdef f(self, b:int) -> numpy.ndarray:
@@ -46,7 +46,7 @@ if (3, 6) <= sys.version_info < (3, 7):
 \t\t...
 \t...\n"""
 else:
-    stub_test_class = """class TestClass(object, metaclass=Meta):
+    stub_test_class = """class TestClass(object, metaclass=tests.definition.Meta):
 \tdef __init__(self, a: numpy.ndarray):
 \t\t...
 \tdef f(self, b: int) -> numpy.ndarray:
