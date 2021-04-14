@@ -12,15 +12,15 @@ def test_constructor():
 def test_generate_function_stub():
     file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'definition.py')
     generator = StubGenerator(file_path)
-    generated_stub_f_meta = generator._generate_function_stub(f_meta)
+    generated_stub_f_meta = generator._generate_function_stub(f_meta.__name__, f_meta)
     assert generated_stub_f_meta == stub_f_meta
 
 
 def test_generate_class_stub():
     file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'definition.py')
     generator = StubGenerator(file_path)
-    generated_stub_test_class = generator._generate_class_stub(TestClass)
-    generated_stub_meta_class = generator._generate_class_stub(Meta)
+    generated_stub_test_class = generator._generate_class_stub(TestClass.__name__, TestClass)
+    generated_stub_meta_class = generator._generate_class_stub(Meta.__name__, Meta)
 
     assert generated_stub_test_class == stub_test_class
     assert generated_stub_meta_class == stub_meta_class

@@ -30,9 +30,11 @@ class StubGenerator:
         self._modules: List[ModuleType] = [getattr(module, item) for item in module.__dict__.keys() if inspect.ismodule(getattr(module, item))]
         self._stubs_strings: List[str] = []
 
-    def _generate_class_stub(self, clazz: type) -> str:
+    def _generate_class_stub(self, name: str, clazz: type) -> str:
         """
         Generates the stub string for the given class
+        :param name: the class name
+        :type name: str
         :param clazz: the class to generate stub
         :type clazz: type
         :return: the str which contains the stub
@@ -41,7 +43,7 @@ class StubGenerator:
         buff = StringIO()
 
         # Class prototype
-        buff.write('class ' + clazz.__name__.split('.')[-1] + '(')
+        buff.write('class ' + name.split('.')[-1] + '(')
 
         # Add super classes
         for c in clazz.__bases__:
@@ -52,15 +54,17 @@ class StubGenerator:
 
         for key, element in clazz.__dict__.items():
             if inspect.isfunction(element):
-                buff.write(self._generate_function_stub(element, indentation='\t'))
+                buff.write(self._generate_function_stub(key, element, indentation='\t'))
 
         buff.write('\t...\n')
 
         return buff.getvalue()
 
-    def _generate_function_stub(self, func: Callable, indentation: str = '') -> str:
+    def _generate_function_stub(self, name: str, func: Callable, indentation: str = '') -> str:
         """
         Generates the stub string for the given function
+        :param name: the function name
+        :type name: str
         :param func: the function to generate stub
         :type func: Callable
         :param indentation: the string used to correctly align the function stub
@@ -68,7 +72,7 @@ class StubGenerator:
         :rtype: str
         """
         buff = StringIO()
-        buff.write(indentation + 'def ' + func.__name__ + str(signature(func)) + ':\n')
+        buff.write(indentation + 'def ' + name + str(signature(func)) + ':\n')
         if func.__doc__ is not None:
             buff.write(indentation + '\t"""\n')
             for line in func.__doc__.split('\n')[1:-1]:
@@ -106,9 +110,9 @@ class StubGenerator:
         for member_name in self._members:
             attr = getattr(self._module, member_name)
             if inspect.isclass(attr):
-                self._stubs_strings.append(self._generate_class_stub(attr))
+                self._stubs_strings.append(self._generate_class_stub(member_name, attr))
             elif inspect.isfunction(attr):
-                self._stubs_strings.append(self._generate_function_stub(attr))
+                self._stubs_strings.append(self._generate_function_stub(member_name, attr))
             elif not inspect.ismodule(attr):
                 self._stubs_strings.append(self._generate_generic_stub(member_name, attr))
 
