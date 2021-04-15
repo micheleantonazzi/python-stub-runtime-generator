@@ -37,7 +37,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install twine
       - name: Publish package to PyPI
-      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_STUB_GENERATOR }}
