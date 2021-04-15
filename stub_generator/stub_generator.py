@@ -3,7 +3,9 @@ import importlib.util
 import inspect
 import os
 from io import StringIO
-from typing import List, Callable, Any, Union, _VariadicGenericAlias
+from typing import List, Callable, Any, Union
+
+import typing
 
 
 class StubGenerator:
@@ -27,7 +29,7 @@ class StubGenerator:
         self._modules: List[str] = [getattr(module, item).__name__ for item in module.__dict__.keys() if inspect.ismodule(getattr(module, item))]
         self._stubs_strings: List[str] = []
 
-    def _get_element_name_with_module(self, element: Union[type, _VariadicGenericAlias]) -> str:
+    def _get_element_name_with_module(self, element: Union[type, Any]) -> str:
         """
         Returns the element name with the relative module and adds the module to the imports (if it is not yet present)
         :param element: the element
@@ -44,7 +46,7 @@ class StubGenerator:
                 self._modules.append(module_name)
 
             return '{0}.{1}'.format(module_name, element.__name__)
-        elif isinstance(element, _VariadicGenericAlias):
+        elif inspect.getmodule(element) == inspect.getmodule(typing):
             module_list = str(element).split('.')[:-1]
             module_name = '.'.join(module_list)
             if module_name not in self._modules:
