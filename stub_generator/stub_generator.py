@@ -2,10 +2,8 @@ import importlib.machinery
 import importlib.util
 import inspect
 import os
-from inspect import signature
 from io import StringIO
-from types import ModuleType
-from typing import List, Callable, Any
+from typing import List, Callable, Any, Union, _VariadicGenericAlias
 
 
 class StubGenerator:
@@ -26,25 +24,33 @@ class StubGenerator:
         self._module = module
 
         self._members: List[str] = [item for item in module.__dict__.keys() if not item.startswith('__')]
-        self._modules: List[ModuleType] = [getattr(module, item) for item in module.__dict__.keys() if inspect.ismodule(getattr(module, item))]
+        self._modules: List[str] = [getattr(module, item).__name__ for item in module.__dict__.keys() if inspect.ismodule(getattr(module, item))]
         self._stubs_strings: List[str] = []
 
-    def _get_element_name_with_module(self, element: type) -> str:
+    def _get_element_name_with_module(self, element: Union[type, _VariadicGenericAlias]) -> str:
         """
         Returns the element name with the relative module and adds the module to the imports (if it is not yet present)
         :param element: the element
         :return:
         :rtype: str
         """
-        module = inspect.getmodule(element)
-        if module is None or module.__name__ == 'builtins' or module.__name__ == '__main__' :
-            return element.__name__
+        if isinstance(element, type):
+            module = inspect.getmodule(element)
+            if module is None or module.__name__ == 'builtins' or module.__name__ == '__main__':
+                return element.__name__
 
-        module_name = module.__name__
-        if module not in self._modules:
-            self._modules.append(module)
+            module_name = module.__name__
+            if module_name not in self._modules:
+                self._modules.append(module_name)
 
-        return '{0}.{1}'.format(module_name, element.__name__)
+            return '{0}.{1}'.format(module_name, element.__name__)
+        elif isinstance(element, _VariadicGenericAlias):
+            module_list = str(element).split('.')[:-1]
+            module_name = '.'.join(module_list)
+            if module_name not in self._modules:
+                self._modules.append(module_name)
+
+            return str(element)
 
     def _generate_class_stub(self, name: str, clazz: type) -> str:
         """
@@ -89,8 +95,31 @@ class StubGenerator:
         :return: the str which contains the stub
         :rtype: str
         """
+        def exploit_annotation(annotation: Any, starting: str = ': ') -> str:
+            annotation_string = ''
+            if annotation != inspect._empty:
+                annotation_string += starting + self._get_element_name_with_module(annotation)
+            return annotation_string
+
         buff = StringIO()
-        buff.write(indentation + 'def ' + name + str(signature(func)) + ':\n')
+        sign = inspect.signature(func)
+
+        buff.write(indentation + 'def ' + name + '(')
+        for i, (par_name, parameter) in enumerate(sign.parameters.items()):
+            annotation = exploit_annotation(parameter.annotation)
+            default = ''
+            if parameter.default != parameter.empty and type(parameter.default).__module__ == 'builtins':
+                default = ' = ' + str(parameter.default) if not isinstance(parameter.default, str) else ' = \'' + parameter.default + '\''
+
+            buff.write(par_name + annotation + default)
+
+            if i < len(sign.parameters) - 1:
+                buff.write(', ')
+
+        ret_annotation = exploit_annotation(sign.return_annotation, starting=' -> ')
+        buff.write(')' + ret_annotation + ':\n')
+
+
         if func.__doc__ is not None:
             buff.write(indentation + '\t"""\n')
             for line in func.__doc__.split('\n')[1:-1]:
@@ -109,7 +138,7 @@ class StubGenerator:
         :return: the stub as a string
         :rtype: str
         """
-        return '{0}: {1}\n'.format(element_name, type(element).__name__)
+        return '{0}: {1}\n'.format(element_name, self._get_element_name_with_module(type(element)))
 
     def get_stubs(self) -> List[str]:
         """
@@ -143,7 +172,7 @@ class StubGenerator:
         """
         with open(self._file_path + 'i', mode='w') as f:
             for module in self._modules:
-                f.write('import ' + module.__name__ + '\n')
+                f.write('import ' + module + '\n')
             f.write('\n')
             for stub in self._stubs_strings:
                 f.write(stub + '\n')
