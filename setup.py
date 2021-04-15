@@ -41,6 +41,7 @@ extras = {
 setup(
     name='stub-generator',
     version=__version__,
+    python_requires='>3.6.0',
     description="Python stub generator",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -48,7 +49,7 @@ setup(
     author="Michele Antonazzi",
     author_email="micheleantonazzi@gmail.com",
     # Choose your license
-    license='MIT',
+    license='Apache License 2.0',
     include_package_data=True,
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
