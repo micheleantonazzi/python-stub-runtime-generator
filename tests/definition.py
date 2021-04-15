@@ -22,19 +22,19 @@ class TestClass(metaclass=Meta):
     def __init__(self, a: np.ndarray):
         self._a = a
 
-    def f(self, b: int) -> str:
+    def f(self, b: int) -> np.ndarray:
         """
         docstring
         :param b:
         :return:
         """
-        return 'Hi'
+        return np.array([b])
 
 
 stub_test_class = """class TestClass(object, metaclass=tests.definition.Meta):
 \tdef __init__(self, a: numpy.ndarray):
 \t\t...
-\tdef f(self, b: int) -> str:
+\tdef f(self, b: int) -> numpy.ndarray:
 \t\t\"\"\"
 \t\tdocstring
 \t\t:param b:
@@ -60,6 +60,10 @@ stub_f_meta = """def f_meta(self, c: typing.Callable, i: int, a: tests.definitio
 """
 
 stub_generic_f_meta = """stub_f_meta: str
+"""
+
+stub_lambda = """def lam(x):
+	...
 """
 
 lam = lambda x: x

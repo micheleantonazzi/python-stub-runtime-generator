@@ -2,7 +2,7 @@ import os.path
 import pytest
 
 from stub_generator.stub_generator import StubGenerator
-from tests.definition import TestClass, stub_test_class, stub_meta_class, Meta, f_meta, stub_f_meta, stub_generic_f_meta
+from tests.definition import TestClass, stub_test_class, stub_meta_class, Meta, f_meta, stub_f_meta, stub_generic_f_meta, lam, stub_lambda
 
 
 def test_constructor():
@@ -14,7 +14,9 @@ def test_generate_function_stub():
     file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'definition.py')
     generator = StubGenerator(file_path)
     generated_stub_f_meta = generator._generate_function_stub(f_meta.__name__, f_meta)
+    generate_stub_lambda = generator._generate_function_stub('lam', lam)
     assert generated_stub_f_meta == stub_f_meta
+    assert generate_stub_lambda == stub_lambda
 
 
 def test_generate_class_stub():
@@ -42,3 +44,5 @@ def test_generate_stubs_strings():
         os.path.exists(file_path + 'i')
     except FileNotFoundError:
         assert False
+
+    assert len(generator.get_stubs()) == 10
