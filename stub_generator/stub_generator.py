@@ -113,7 +113,7 @@ class StubGenerator:
         for i, (par_name, parameter) in enumerate(sign.parameters.items()):
             annotation = exploit_annotation(parameter.annotation)
             default = ''
-            if parameter.default != parameter.empty and type(parameter.default).__module__ == 'builtins' and not isinstance(parameter.default, object):
+            if parameter.default != parameter.empty and type(parameter.default).__module__ == 'builtins' and not str(parameter.default).startswith('<'):
                 default = ' = ' + str(parameter.default) if not isinstance(parameter.default, str) else ' = \'' + parameter.default + '\''
 
             buff.write(par_name + annotation + default)
