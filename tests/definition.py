@@ -1,6 +1,7 @@
 import sys
 import numpy as np
 import typing as tp
+from typing import Any
 
 class A:
     pass
@@ -19,7 +20,7 @@ class Meta(type):
 
 
 class TestClass(metaclass=Meta):
-    def __init__(self, a: np.ndarray):
+    def __init__(self, a: np.ndarray, b: Any):
         self._a = a
 
     def f(self, b: int) -> np.ndarray:
@@ -32,7 +33,7 @@ class TestClass(metaclass=Meta):
 
 
 stub_test_class = """class TestClass(object, metaclass=tests.definition.Meta):
-\tdef __init__(self, a: numpy.ndarray):
+\tdef __init__(self, a: numpy.ndarray, b: typing.Any):
 \t\t...
 \tdef f(self, b: int) -> numpy.ndarray:
 \t\t\"\"\"
