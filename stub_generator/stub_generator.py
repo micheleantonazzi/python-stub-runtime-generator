@@ -25,7 +25,8 @@ class StubGenerator:
         loader.exec_module(module)
         self._module = module
 
-        self._members: List[str] = [item for item in module.__dict__.keys() if not item.startswith('__')]
+        # Remove members that are not defined in self._file_path: all fields with module == None are defined in this file
+        self._members: List[str] = [item for item in module.__dict__.keys() if not item.startswith('__') and inspect.getmodule(getattr(module, item)) == None]
         self._modules: List[str] = [getattr(module, item).__name__ for item in module.__dict__.keys() if inspect.ismodule(getattr(module, item))]
         self._stubs_strings: List[str] = []
 
@@ -36,7 +37,10 @@ class StubGenerator:
         :return:
         :rtype: str
         """
-        if isinstance(element, type):
+        # The element can be a string, for example "def f() -> 'SameClass':..."
+        if isinstance(element, str):
+            return element
+        elif isinstance(element, type):
             module = inspect.getmodule(element)
             if module is None or module.__name__ == 'builtins' or module.__name__ == '__main__':
                 return element.__name__
@@ -47,8 +51,7 @@ class StubGenerator:
 
             return '{0}.{1}'.format(module_name, element.__name__)
         elif inspect.getmodule(element) == inspect.getmodule(typing):
-            module_list = str(element).split('.')[:-1]
-            module_name = '.'.join(module_list)
+            module_name = str(element).split('.')[0]
             if module_name not in self._modules:
                 self._modules.append(module_name)
 
@@ -110,14 +113,13 @@ class StubGenerator:
         for i, (par_name, parameter) in enumerate(sign.parameters.items()):
             annotation = exploit_annotation(parameter.annotation)
             default = ''
-            if parameter.default != parameter.empty and type(parameter.default).__module__ == 'builtins':
+            if parameter.default != parameter.empty and type(parameter.default).__module__ == 'builtins' and not isinstance(parameter.default, object):
                 default = ' = ' + str(parameter.default) if not isinstance(parameter.default, str) else ' = \'' + parameter.default + '\''
 
             buff.write(par_name + annotation + default)
 
             if i < len(sign.parameters) - 1:
                 buff.write(', ')
-
         ret_annotation = exploit_annotation(sign.return_annotation, starting=' -> ')
         buff.write(')' + ret_annotation + ':\n')
 
