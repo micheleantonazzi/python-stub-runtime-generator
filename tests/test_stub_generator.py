@@ -1,5 +1,6 @@
 import os.path
 import pytest
+import filecmp
 
 from stub_generator.stub_generator import StubGenerator
 from tests.definition import TestClass, stub_test_class, stub_meta_class, Meta, f_meta, stub_f_meta, stub_generic_f_meta, lam, stub_lambda
@@ -46,3 +47,10 @@ def test_generate_stubs_strings():
         assert False
 
     assert len(generator.get_stubs()) == 10
+
+def test_write_to_file():
+    file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'definition.py')
+    generator = StubGenerator(file_path)
+    generator.generate_stubs().write_to_file()
+    assert filecmp.cmp(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'definition.pyi'), os.path.join(os.path.dirname(os.path.abspath(__file__)), 'definition_final.test'))
+

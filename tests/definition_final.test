@@ -1,0 +1,46 @@
+import sys
+import numpy
+import typing
+
+class A(object, metaclass=type):
+	...
+
+def f_meta(self, c: typing.Callable, i: int, a: A, s: str = 'Hi') -> int:
+	"""
+	docstring
+	"""
+	...
+
+class Meta(type, metaclass=type):
+	...
+
+class TestClass(object, metaclass=Meta):
+	def __init__(self, a: numpy.ndarray, b: typing.Any):
+		...
+	def f(self, b: int) -> numpy.ndarray:
+		"""
+		docstring
+		:param b:
+		:return:
+		"""
+		...
+	def f_meta(self, c: typing.Callable, i: int, a: A, s: str = 'Hi') -> int:
+		"""
+		docstring
+		"""
+		...
+	...
+
+stub_test_class: str
+
+stub_meta_class: str
+
+stub_f_meta: str
+
+stub_generic_f_meta: str
+
+stub_lambda: str
+
+def lam(x):
+	...
+
