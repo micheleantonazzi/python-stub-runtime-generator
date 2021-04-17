@@ -30,9 +30,15 @@ This utility automatically creates stub files loading the Python code and analyz
 ## How it works
 The main object is called StubGenerator. It takes a Python file path and generates the corresponding stub file in the same directory. 
 
-**NB:** annotate as much as possibile your Python file to improve the stub file quality. Use *doc-strings* and *type hints*.
+**NB:** annotate as much as possible your Python file to improve the stub file quality. Use *doc-strings* and *type hints*.
 
-To produce a stub file, run this code ```StubGenerator(file_path='*.py').generate_stubs().write_to_file()```.
+To produce a stub file, run this code 
+
+```python
+StubGenerator(file_path='*.py', members_from_other_modules=['member_defined_in_other_module',...]).generate_stubs().write_to_file()
+```
+
+```StubGenerator(file_path='*.py', members_from_other_modules=['member_defined in other_module',...]).generate_stubs().write_to_file()```. The StubGenerator object produces the stub file of the given file and save it in the same path. By default, only members defined in that file are considered, the others are ignored. It is possible to produce the stub for a member defined in another file, just use the second parameter of the constructor.
 
 For example, if you have a Python file like this:
 
@@ -69,7 +75,7 @@ class TestClass(metaclass=Meta):
         :return:
         """
         return np.array([b])
-
+. its name 
 
 s = 'string'
 
@@ -122,7 +128,13 @@ def lam(x):
 
 To use this module successfully, you need to change your code style a little, following these tips:
 
-* *StubGenerator* considers only the types that are defined in the input file. For example, the line ```MyException = Exception``` is ignored, because the type *MyExcpetion* is another way to call *Exception* type, which is defined in another file. This issues can be easily overcome defining a new type:
+* *StubGenerator* considers only the types that are defined in the input file. For example, the line ```MyException = Exception``` is ignored, because the type *MyExcpetion* is another way to call *Exception* type, which is defined in another file. This issues can be easily overcome passing 'MyException' to StubGenerator constructor:
+
+  ```python
+  StubGenerator(file_path='*.py', members_from_other_modules=['MyException']).generate_stubs().write_to_file()
+  ```
+
+  or defining a new type:
 
   ```python
   class MyException(Exception):

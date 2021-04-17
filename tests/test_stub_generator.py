@@ -10,6 +10,13 @@ def test_constructor():
     with pytest.raises(FileNotFoundError):
         StubGenerator('./fdefinition.py')
 
+    file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'definition.py')
+    generator = StubGenerator(file_path, ['error']).generate_stubs()
+    assert len(generator.get_stubs()) == 10
+    generator = StubGenerator(file_path, ['f_meta']).generate_stubs()
+    assert len(generator.get_stubs()) == 10
+
+
 
 def test_generate_function_stub():
     file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'definition.py')
@@ -39,7 +46,7 @@ def test_generate_generic_stub():
 
 def test_generate_stubs_strings():
     file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'definition.py')
-    generator = StubGenerator(file_path)
+    generator = StubGenerator(file_path, ['f_meta'])
     generator.generate_stubs().write_to_file()
     try:
         os.path.exists(file_path + 'i')
@@ -50,7 +57,7 @@ def test_generate_stubs_strings():
 
 def test_write_to_file():
     file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'definition.py')
-    generator = StubGenerator(file_path)
+    generator = StubGenerator(file_path, ['f_meta'])
     generator.generate_stubs().write_to_file()
     assert filecmp.cmp(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'definition.pyi'), os.path.join(os.path.dirname(os.path.abspath(__file__)), 'definition_final.test'))
 

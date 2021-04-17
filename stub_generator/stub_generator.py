@@ -7,6 +7,8 @@ from typing import List, Callable, Any, Union
 
 import typing
 
+from termcolor import colored
+
 
 class StubGenerator:
     """
@@ -14,8 +16,17 @@ class StubGenerator:
     defined inside it at run time.
     This means that the file is not statically parsed, but it is executed and
     then the types are dynamically created and analyzed to produce the stub file.
+    The only items to be analyzed are those defined in the input file, whose defined in other modules are ignored.
+    To include members defined in other modules, you have to specify their names in the constructor
     """
-    def __init__(self, file_path: str):
+    def __init__(self, file_path: str, members_from_other_modules: List[str] = []):
+        """
+        Initializes the StubGenerator.
+        :param file_path: the file path
+        :type file_path: str
+        :param members_from_other_modules: the names of the members defined in other module to be analyzed
+        :type members_from_other_modules: List[str]
+        """
         self._file_path: str = file_path
         if not os.path.exists(self._file_path):
             raise FileNotFoundError
@@ -25,8 +36,14 @@ class StubGenerator:
         loader.exec_module(module)
         self._module = module
 
+        # Check of the members from other modules are contained in the given file
+        self._members: List[str] = []
+        for item in members_from_other_modules:
+            if item not in module.__dict__.keys():
+                print(colored('The member {0} is not contained in the input file: it is ignored'.format(item), 'yellow'))
+
         # Remove members that are not defined in self._file_path: all fields with module == None are defined in this file
-        self._members: List[str] = [item for item in module.__dict__.keys() if not item.startswith('__') and inspect.getmodule(getattr(module, item)) == None]
+        self._members += [item for item in module.__dict__.keys() if item in members_from_other_modules or (not item.startswith('__') and inspect.getmodule(getattr(module, item)) == None)]
         self._modules: List[str] = [getattr(module, item).__name__ for item in module.__dict__.keys() if inspect.ismodule(getattr(module, item))]
         self._stubs_strings: List[str] = []
 
