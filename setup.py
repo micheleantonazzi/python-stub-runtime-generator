@@ -60,6 +60,7 @@ setup(
     # Add here the package dependencies
     install_requires=[
         'numpy',
+        'termcolor'
     ],
     entry_points={
         'console_scripts': [
