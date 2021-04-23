@@ -27,7 +27,10 @@ To solve this issue, it is possible to use a *stub file*,
 that a skeleton of the public interface of the library, including classes, variables and functions, and their types.
 This utility automatically creates stub files loading the Python code and analyzing it dynamically.
 
-## How it works
+## Known issues
+
+* **Recursion import error:** the generate_stub() method fails if the file passed to constructor is the same in which the StubGenerator instance is declared. To solve it, just create another file to use StubGenerator.
+
 The main object is called StubGenerator. It takes a Python file path and generates the corresponding stub file in the same directory. 
 
 **NB:** annotate as much as possible your Python file to improve the stub file quality. Use *doc-strings* and *type hints*.

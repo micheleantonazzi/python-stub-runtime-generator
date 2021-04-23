@@ -12,12 +12,12 @@ from termcolor import colored
 
 class StubGenerator:
     """
-    This class takes a file as input and generates the corresponding stub file for each types (generic variables, functions, classes)
-    defined inside it at run time.
+    This class takes a file as input and generates the corresponding stub file for each defined type
+    (generic variables, functions, classes, etc.) at run time.
     This means that the file is not statically parsed, but it is executed and
     then the types are dynamically created and analyzed to produce the stub file.
-    The only items to be analyzed are those defined in the input file, whose defined in other modules are ignored.
-    To include members defined in other modules, you have to specify their names in the constructor
+    The only items to be analyzed are those defined in the input file, while whose imported from other modules are ignored.
+    To include members defined in other modules, you have to specify their names in the constructor.
     """
     def __init__(self, file_path: str, members_from_other_modules: List[str] = []):
         """
