@@ -24,8 +24,10 @@ The term *metaprogramming* refers to the potential for a program to have knowled
 In other words, Python allows generating code at run time using the metaclasses.
 This represents an obstacle to autocomplete systems: they cannot suggest what is defined during the code execution.
 To solve this issue, it is possible to use a *stub file*,
-that is a skeleton of the public interface of the library, including classes, variables and functions, and their types.
-This utility automatically creates stub files loading the Python code and analyzing it dynamically.
+which defines the code skeleton and the public interface of a module.
+By parsing this file, an autocomplete tool can provide hints and suggestions to the programmer,
+in order to make the coding activity faster.
+This utility automatically creates *stub files* at run time, loading the Python code and analyzing it dynamically.
 
 ## Known issues
 
