@@ -5,7 +5,6 @@
 
 
 
-[![](https://sonarcloud.io/api/project_badges/measure?project=micheleantonazzi_python-stub-runtime-generator&metric=alert_status)](https://sonarcloud.io/dashboard/index/micheleantonazzi_python-stub-runtime-generator)
 [![](https://sonarcloud.io/api/project_badges/measure?project=micheleantonazzi_python-stub-runtime-generator&metric=sqale_rating)](https://sonarcloud.io/dashboard/index/micheleantonazzi_python-stub-runtime-generator)
 [![](https://sonarcloud.io/api/project_badges/measure?project=micheleantonazzi_python-stub-runtime-generator&metric=reliability_rating)](https://sonarcloud.io/dashboard/index/micheleantonazzi_python-stub-runtime-generator)
 [![](https://sonarcloud.io/api/project_badges/measure?project=micheleantonazzi_python-stub-runtime-generator&metric=security_rating)](https://sonarcloud.io/dashboard/index/micheleantonazzi_python-stub-runtime-generator)
