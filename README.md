@@ -1,6 +1,7 @@
 # Python stub runtime generator
 ![](https://github.com/micheleantonazzi/python-stub-runtime-generator/workflows/Build/badge.svg?branch=main)
 [![pypi package](https://img.shields.io/pypi/v/stub-generator.svg)](https://pypi.org/project/stub-generator/)
+![PyPI Downloads](https://static.pepy.tech/badge/stub-generator)
 [![](https://sonarcloud.io/api/project_badges/measure?project=micheleantonazzi_python-stub-runtime-generator&metric=coverage)](https://sonarcloud.io/dashboard/index/micheleantonazzi_python-stub-runtime-generator)
 
 
